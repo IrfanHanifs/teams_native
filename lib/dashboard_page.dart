@@ -3,6 +3,10 @@ import 'package:teams_native/lembur_page.dart';
 import 'package:teams_native/cuti_page.dart';
 import 'package:teams_native/perjalanan_dinas_page.dart';
 import 'package:teams_native/izin_page.dart';
+import 'package:teams_native/sakit_tanpa_page.dart';
+import 'package:teams_native/sakit_surat_page.dart';
+import 'package:teams_native/riwayat_presensi_page.dart';
+import 'package:teams_native/profil_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -18,33 +22,50 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 32),
-              _buildStatusCard(),
-              const SizedBox(height: 24),
-              _buildTravelAssignmentCard(),
-              const SizedBox(height: 32),
-              _buildSectionTitle('Menu Layanan'),
-              const SizedBox(height: 16),
-              _buildMenuGrid(),
-              const SizedBox(height: 32),
-              _buildSectionTitle('Riwayat Presensi Hari Ini'),
-              const SizedBox(height: 16),
-              _buildAttendanceHistory(),
-              const SizedBox(height: 24),
-              _buildWorkingHoursInfo(),
-              const SizedBox(height: 100), // Space for bottom nav
-            ],
-          ),
+      body: _buildBody(),
+      bottomNavigationBar: _buildBottomNavBar(),
+    );
+  }
+
+  Widget _buildBody() {
+    switch (_currentIndex) {
+      case 0:
+        return _buildDashboardView();
+      case 1:
+        return const RiwayatPresensiPage();
+      case 2:
+        return const ProfilPage();
+      default:
+        return _buildDashboardView();
+    }
+  }
+
+  Widget _buildDashboardView() {
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeader(),
+            const SizedBox(height: 32),
+            _buildStatusCard(),
+            const SizedBox(height: 24),
+            _buildTravelAssignmentCard(),
+            const SizedBox(height: 32),
+            _buildSectionTitle('Menu Layanan'),
+            const SizedBox(height: 16),
+            _buildMenuGrid(),
+            const SizedBox(height: 32),
+            _buildSectionTitle('Riwayat Presensi Hari Ini'),
+            const SizedBox(height: 16),
+            _buildAttendanceHistory(),
+            const SizedBox(height: 24),
+            _buildWorkingHoursInfo(),
+            const SizedBox(height: 100), // Space for bottom nav
+          ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
     );
   }
 
@@ -294,6 +315,16 @@ class _DashboardPageState extends State<DashboardPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const IzinPage()),
+                );
+              } else if (item['title'] == 'Sakit (Tanpa)') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SakitTanpaPage()),
+                );
+              } else if (item['title'] == 'Sakit (Surat)') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SakitSuratPage()),
                 );
               }
             },
