@@ -23,10 +23,6 @@ class _ProfilPageState extends State<ProfilPage> {
             bottom: false,
             child: Row(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Color(0xFF2563EB)),
-                  onPressed: () {},
-                ),
                 const Expanded(
                   child: Center(
                     child: Text(
@@ -39,7 +35,6 @@ class _ProfilPageState extends State<ProfilPage> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 48), // Spacer to balance back button
               ],
             ),
           ),

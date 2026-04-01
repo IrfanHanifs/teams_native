@@ -8,6 +8,26 @@ class AjukanSakitTanpaPage extends StatefulWidget {
 }
 
 class _AjukanSakitTanpaPageState extends State<AjukanSakitTanpaPage> {
+  final TextEditingController _startDateController = TextEditingController();
+  final TextEditingController _endDateController = TextEditingController();
+
+  Future<void> _selectDate(BuildContext context, bool isStartDate) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      setState(() {
+        if (isStartDate) {
+          _startDateController.text = "${picked.month}/${picked.day}/${picked.year}";
+        } else {
+          _endDateController.text = "${picked.month}/${picked.day}/${picked.year}";
+        }
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,14 +95,30 @@ class _AjukanSakitTanpaPageState extends State<AjukanSakitTanpaPage> {
                   // Specific Date
                   _buildFormLabel('Tanggal Izin'),
                   const SizedBox(height: 10),
-                  _buildDatePickerField('mm/dd/yyyy'),
+                  InkWell(
+                    onTap: () => _selectDate(context, true),
+                    child: IgnorePointer(
+                      child: _buildDatePickerField(
+                        controller: _startDateController,
+                        hint: 'mm/dd/yyyy',
+                      ),
+                    ),
+                  ),
                   
                   const SizedBox(height: 24),
                   
                   // End Date
                   _buildFormLabel('Tanggal Selesai Izin'),
                   const SizedBox(height: 10),
-                  _buildDatePickerField('mm/dd/yyyy'),
+                  InkWell(
+                    onTap: () => _selectDate(context, false),
+                    child: IgnorePointer(
+                      child: _buildDatePickerField(
+                        controller: _endDateController,
+                        hint: 'mm/dd/yyyy',
+                      ),
+                    ),
+                  ),
                   
                   const SizedBox(height: 24),
                   
@@ -122,7 +158,7 @@ class _AjukanSakitTanpaPageState extends State<AjukanSakitTanpaPage> {
     );
   }
 
-  Widget _buildDatePickerField(String hint) {
+  Widget _buildDatePickerField({TextEditingController? controller, required String hint}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
@@ -133,12 +169,19 @@ class _AjukanSakitTanpaPageState extends State<AjukanSakitTanpaPage> {
         children: [
           const Icon(Icons.calendar_today_rounded, color: Color(0xFF2563EB), size: 18),
           const SizedBox(width: 12),
-          Text(
-            hint,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF94A3B8),
+          Expanded(
+            child: TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                hintText: hint,
+                isDense: true,
+                border: InputBorder.none,
+                hintStyle: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF94A3B8),
+                ),
+              ),
             ),
           ),
         ],
@@ -235,7 +278,9 @@ class _AjukanSakitTanpaPageState extends State<AjukanSakitTanpaPage> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {},
+        onTap: () {
+          Navigator.pop(context);
+        },
           borderRadius: BorderRadius.circular(16),
           child: const Center(
             child: Row(

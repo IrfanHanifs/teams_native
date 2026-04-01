@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
-class DetailPerjalananPage extends StatelessWidget {
+class DetailPerjalananPage extends StatefulWidget {
   const DetailPerjalananPage({super.key});
+
+  @override
+  State<DetailPerjalananPage> createState() => _DetailPerjalananPageState();
+}
+
+class _DetailPerjalananPageState extends State<DetailPerjalananPage> {
+  bool _isCompleted = false;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +72,7 @@ class DetailPerjalananPage extends StatelessWidget {
             const SizedBox(height: 40),
             
             // Action Button
-            _buildFinishButton(context),
+            if (!_isCompleted) _buildFinishButton(context),
             
             const SizedBox(height: 48),
           ],
@@ -108,18 +115,18 @@ class DetailPerjalananPage extends StatelessWidget {
                   Container(
                     width: 8,
                     height: 8,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFEF4444),
+                    decoration: BoxDecoration(
+                      color: _isCompleted ? const Color(0xFF10B981) : const Color(0xFFEF4444),
                       shape: BoxShape.circle,
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Text(
-                    'Belum Selesai',
+                  Text(
+                    _isCompleted ? 'Selesai' : 'Belum Selesai',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFFEF4444),
+                      color: _isCompleted ? const Color(0xFF10B981) : const Color(0xFFEF4444),
                     ),
                   ),
                 ],
@@ -129,10 +136,14 @@ class DetailPerjalananPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFFFEF2F2),
+              color: _isCompleted ? const Color(0xFFECFDF5) : const Color(0xFFFEF2F2),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(Icons.history_rounded, color: Color(0xFFEF4444), size: 24),
+            child: Icon(
+              Icons.history_rounded, 
+              color: _isCompleted ? const Color(0xFF10B981) : const Color(0xFFEF4444), 
+              size: 24
+            ),
           ),
         ],
       ),
@@ -360,7 +371,14 @@ class DetailPerjalananPage extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {},
+          onTap: () {
+            setState(() {
+              _isCompleted = true;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Perjalanan telah diselesaikan')),
+            );
+          },
           borderRadius: BorderRadius.circular(16),
           child: const Center(
             child: Row(
