@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class DetailCutiPage extends StatelessWidget {
-  const DetailCutiPage({super.key});
+  final bool isApproved;
+  const DetailCutiPage({super.key, this.isApproved = true});
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +23,6 @@ class DetailCutiPage extends StatelessWidget {
             fontSize: 18,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert, color: Color(0xFF0F172A)),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -48,11 +43,18 @@ class DetailCutiPage extends StatelessWidget {
             _buildDescriptionBox(),
             const SizedBox(height: 32),
             
-            // Approval Section
+            // Approval Section (only if not rejected or maybe both)
             _buildSectionTitle('Persetujuan'),
             const SizedBox(height: 12),
             _buildApprovalCard(),
             const SizedBox(height: 32),
+
+            if (!isApproved) ...[
+              _buildSectionTitle('Alasan Penolakan'),
+              const SizedBox(height: 12),
+              _buildRejectionReasonCard(),
+              const SizedBox(height: 32),
+            ],
             
             // Attachment Section
             _buildSectionTitle('Lampiran'),
@@ -61,13 +63,13 @@ class DetailCutiPage extends StatelessWidget {
             const SizedBox(height: 48),
             
             // Action Buttons
-            _buildActionButton(
-              label: 'Download Bukti Cuti',
-              color: const Color(0xFF2563EB),
-              textColor: Colors.white,
-              icon: Icons.download_rounded,
-            ),
-            const SizedBox(height: 16),
+            // _buildActionButton(
+            //   label: 'Download Bukti Cuti',
+            //   color: const Color(0xFF2563EB),
+            //   textColor: Colors.white,
+            //   icon: Icons.download_rounded,
+            // ),
+            // const SizedBox(height: 16),
             _buildActionButton(
               label: 'Batalkan Pengajuan',
               color: Colors.white,
@@ -111,9 +113,9 @@ class DetailCutiPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'Disetujui',
-                style: TextStyle(
+              Text(
+                isApproved ? 'Disetujui' : 'Ditolak',
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w900,
                   color: Color(0xFF0F172A),
@@ -124,21 +126,21 @@ class DetailCutiPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFFE8F5E9),
+              color: isApproved ? const Color(0xFFE8F5E9) : const Color(0xFFFEF2F2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               children: [
-                const Icon(
-                  Icons.check_circle_rounded,
-                  color: Color(0xFF10B981),
+                Icon(
+                  isApproved ? Icons.check_circle_rounded : Icons.cancel_rounded,
+                  color: isApproved ? const Color(0xFF10B981) : const Color(0xFFEF4444),
                   size: 16,
                 ),
                 const SizedBox(width: 6),
-                const Text(
-                  'APPROVED',
+                Text(
+                  isApproved ? 'APPROVED' : 'REJECTED',
                   style: TextStyle(
-                    color: Color(0xFF10B981),
+                    color: isApproved ? const Color(0xFF10B981) : const Color(0xFFEF4444),
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 0.5,
@@ -349,9 +351,9 @@ class DetailCutiPage extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              const Text(
-                'APPROVED AT',
-                style: TextStyle(
+              Text(
+                isApproved ? 'APPROVED AT' : 'REJECTED AT',
+                style: const TextStyle(
                   fontSize: 9,
                   color: Color(0xFF94A3B8),
                   fontWeight: FontWeight.w900,
@@ -366,6 +368,48 @@ class DetailCutiPage extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRejectionReasonCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFEF2F2),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFFECDD3)),
+      ),
+      child: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.info_outline_rounded, color: Color(0xFFEF4444), size: 18),
+              SizedBox(width: 8),
+              Text(
+                'ALASAN PENOLAKAN',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFFEF4444),
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12),
+          Text(
+            'Mohon maaf, kuota cuti pada tanggal tersebut sudah penuh dikarenakan adanya peluncuran produk besar-besaran. Silakan ajukan di rentang tanggal lain.',
+            style: TextStyle(
+              fontSize: 13,
+              color: Color(0xFFB91C1C),
+              height: 1.5,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),

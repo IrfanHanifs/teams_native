@@ -17,7 +17,7 @@ class CutiPage extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Leave Management',
+          'Pengajuan Cuti',
           style: TextStyle(
             color: Color(0xFF2563EB),
             fontWeight: FontWeight.bold,
@@ -172,7 +172,16 @@ class CutiPage extends StatelessWidget {
           if (title == 'Cuti Tahunan') {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const DetailCutiPage()),
+              MaterialPageRoute(
+                builder: (context) => const DetailCutiPage(isApproved: true),
+              ),
+            );
+          } else if (title == 'Cuti Alasan Penting') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const DetailCutiPage(isApproved: false),
+              ),
             );
           }
         },

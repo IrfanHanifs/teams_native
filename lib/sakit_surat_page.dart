@@ -23,113 +23,99 @@ class SakitSuratPage extends StatelessWidget {
             fontSize: 18,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert, color: Color(0xFF64748B)),
-            onPressed: () {},
-          ),
-        ],
       ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'RIWAYAT PENGAJUAN',
-                  style: TextStyle(
-                    color: Color(0xFF94A3B8),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.0,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                
-                // Sick Leave Card (APPROVED)
-                _buildSakitCard(
-                  status: 'APPROVED',
-                  statusColor: const Color(0xFF10B981),
-                  date: '12 Nov 2023',
-                  filename: 'Surat_Sakit_12Nov.pdf',
-                  fileType: 'DOKUMEN PDF',
-                  description: 'Gejala demam dan flu berat.',
-                  isPdf: true,
-                ),
-                const SizedBox(height: 24),
-                
-                // Sick Leave Card (REJECTED)
-                _buildSakitCard(
-                  status: 'REJECTED',
-                  statusColor: const Color(0xFFEF4444),
-                  date: '05 Nov 2023',
-                  filename: 'Surat_Dokter_Puskesm...',
-                  fileType: 'GAMBAR JPG',
-                  description: 'Pusing dan mual setelah makan.',
-                  note: 'Foto surat kurang jelas, mohon unggah kembali dokumen asli yang dapat terbaca dengan baik.',
-                  isPdf: false,
-                ),
-                const SizedBox(height: 100), // Bottom space
-              ],
-            ),
-          ),
-          
-          // Action Button
-          Positioned(
-            left: 24,
-            right: 24,
-            bottom: 32,
-            child: Container(
-              height: 56,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF2563EB), Color(0xFF1E40AF)],
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF2563EB).withOpacity(0.3),
-                    blurRadius: 15,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'RIWAYAT PENGAJUAN',
+              style: TextStyle(
+                color: Color(0xFF94A3B8),
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1.0,
               ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AjukanSakitSuratPage(),
+            ),
+            const SizedBox(height: 24),
+            
+            // Sick Leave Card (APPROVED)
+            _buildSakitCard(
+              status: 'APPROVED',
+              statusColor: const Color(0xFF10B981),
+              date: '12 Nov 2023',
+              filename: 'Surat_Sakit_12Nov.pdf',
+              fileType: 'DOKUMEN PDF',
+              description: 'Gejala demam dan flu berat.',
+              isPdf: true,
+            ),
+            const SizedBox(height: 24),
+            
+            // Sick Leave Card (REJECTED)
+            _buildSakitCard(
+              status: 'REJECTED',
+              statusColor: const Color(0xFFEF4444),
+              date: '05 Nov 2023',
+              filename: 'Surat_Dokter_Puskesm...',
+              fileType: 'GAMBAR JPG',
+              description: 'Pusing dan mual setelah makan.',
+              note: 'Foto surat kurang jelas, mohon unggah kembali dokumen asli yang dapat terbaca dengan baik.',
+              isPdf: false,
+            ),
+            const SizedBox(height: 100), // Bottom space
+          ],
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Container(
+        height: 56,
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: const LinearGradient(
+              colors: [Color(0xFF2563EB), Color(0xFF1E40AF)],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF2563EB).withOpacity(0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AjukanSakitSuratPage()),
+                );
+              },
+              borderRadius: BorderRadius.circular(16),
+              child: const Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add_circle_outline_rounded, color: Colors.white, size: 24),
+                    SizedBox(width: 8),
+                    const Text(
+                      'Ajukan Izin',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
-                    );
-                  },
-                  borderRadius: BorderRadius.circular(16),
-                  child: const Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.add_circle_outline_rounded, color: Colors.white, size: 24),
-                        SizedBox(width: 8),
-                        Text(
-                          'Ajukan Izin',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
                     ),
-                  ),
+                  ],
                 ),
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

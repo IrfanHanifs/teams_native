@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'ajukan_izin_page.dart';
 
 class IzinPage extends StatelessWidget {
   const IzinPage({super.key});
@@ -108,7 +109,12 @@ class IzinPage extends StatelessWidget {
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const AjukanIzinPage()),
+                    );
+                  },
                   borderRadius: BorderRadius.circular(16),
                   child: const Center(
                     child: Row(

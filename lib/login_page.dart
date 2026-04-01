@@ -38,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
               // Logo/Header
               Image.asset(
                 'assets/images/logo.png',
-                height: 80,
+                height: 24,
                 fit: BoxFit.contain,
               ),
               const SizedBox(height: 60),
