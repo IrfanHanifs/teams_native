@@ -7,6 +7,7 @@ import 'package:teams_native/sakit_tanpa_page.dart';
 import 'package:teams_native/sakit_surat_page.dart';
 import 'package:teams_native/riwayat_presensi_page.dart';
 import 'package:teams_native/profil_page.dart';
+import 'package:teams_native/presensi_camera_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -147,12 +148,37 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'Klik di sini untuk melakukan presensi',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PresensiCameraPage(),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      const Text(
+                        'Klik di sini untuk melakukan presensi',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          decoration: TextDecoration.underline,
+                          decorationColor: Colors.white54,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 11,
+                        color: Colors.white.withOpacity(0.8),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
