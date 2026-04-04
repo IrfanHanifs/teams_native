@@ -9,6 +9,7 @@ import 'package:teams_native/riwayat_presensi_page.dart';
 import 'package:teams_native/profil_page.dart';
 import 'package:teams_native/presensi_camera_page.dart';
 import 'package:teams_native/detail_perjalanan_page.dart';
+import 'package:teams_native/detail_presensi_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -19,6 +20,7 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   int _currentIndex = 0;
+  int _attendanceState = 0; // 0: Initial, 1: On Time, 2: Late, 3: Late (Var), 4: Finished, 5: Missed Checkout
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +66,7 @@ class _DashboardPageState extends State<DashboardPage> {
             _buildAttendanceHistory(),
             const SizedBox(height: 24),
             _buildWorkingHoursInfo(),
-            const SizedBox(height: 100), // Space for bottom nav
+            const SizedBox(height: 48), // Space for bottom nav reduced
           ],
         ),
       ),
@@ -93,7 +95,7 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Senin, 24 Mei 2024 • 08:15 WIB',
+              "Jum'at, 10 April 2026 • 08:15 WIB",
               style: TextStyle(
                 fontSize: 13,
                 color: const Color(0xFF64748B),
@@ -107,109 +109,178 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget _buildStatusCard() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        gradient: const LinearGradient(
-          colors: [Color(0xFF007AFF), Color(0xFF01BEFD)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF007AFF).withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+    List<Color> colors;
+    String status;
+    String linkText;
+    String pillText;
+    IconData icon;
+    bool showLink = true;
+    Color glowColor;
+
+    switch (_attendanceState) {
+      case 0: // a. N/A (Abu-abu)
+        colors = [const Color(0xFF94A3B8), const Color(0xFF64748B)];
+        status = 'N/A';
+        linkText = 'Klik disini untuk melakukan presensi';
+        pillText = 'Anda belum melakukan presensi masuk.';
+        icon = Icons.hourglass_empty_rounded;
+        glowColor = const Color(0xFF94A3B8);
+        break;
+      case 1: // b. Tepat Waktu (Biru)
+        colors = [const Color(0xFF007AFF), const Color(0xFF01BEFD)];
+        status = 'Tepat Waktu';
+        linkText = 'Klik disini untuk melakukan presensi kepulangan';
+        pillText = 'Anda sudah melakukan presensi masuk.';
+        icon = Icons.verified_user_rounded;
+        glowColor = const Color(0xFF007AFF);
+        break;
+      case 2: // c. Terlambat (Orange)
+      case 3: // d. Terlambat (Orange)
+        colors = [const Color(0xFFF59E0B), const Color(0xFFD97706)];
+        status = 'Terlambat';
+        linkText = 'Klik disini untuk melakukan presensi kepulangan';
+        pillText = 'Anda sudah melakukan presensi masuk.';
+        icon = Icons.warning_amber_rounded;
+        glowColor = const Color(0xFFF59E0B);
+        break;
+      case 4: // e. Selesai (Hijau)
+        colors = [const Color(0xFF10B981), const Color(0xFF059669)];
+        status = 'Selesai';
+        linkText = '';
+        pillText = 'Terima kasih telah melakukan presensi.';
+        icon = Icons.check_circle_rounded;
+        showLink = false;
+        glowColor = const Color(0xFF10B981);
+        break;
+      case 5: // f. Belum Presensi (Merah)
+        colors = [const Color(0xFFEF4444), const Color(0xFFDC2626)];
+        status = 'Belum Presensi';
+        linkText = 'Klik disini untuk melakukan presensi kepulangan';
+        pillText = 'Anda belum melakukan presensi kepulangan.';
+        icon = Icons.error_outline_rounded;
+        glowColor = const Color(0xFFEF4444);
+        break;
+      default:
+        colors = [const Color(0xFF007AFF), const Color(0xFF01BEFD)];
+        status = 'Tepat Waktu';
+        linkText = 'Klik di sini untuk melakukan presensi';
+        pillText = 'Anda belum melakukan presensi masuk.';
+        icon = Icons.verified_user_rounded;
+        glowColor = const Color(0xFF007AFF);
+    }
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _attendanceState = (_attendanceState + 1) % 6;
+        });
+      },
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          gradient: LinearGradient(
+            colors: colors,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-        ],
-      ),
-      padding: const EdgeInsets.all(24),
-      child: Stack(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'STATUS KEHADIRAN',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1.2,
-                ),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'On Time',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 36,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PresensiCameraPage(),
-                    ),
-                  );
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    children: [
-                      const Text(
-                        'Klik di sini untuk melakukan presensi',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          decoration: TextDecoration.underline,
-                          decorationColor: Colors.white54,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        size: 11,
-                        color: Colors.white.withOpacity(0.8),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Text(
-                  'Anda sudah melakukan presensi masuk.',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Positioned(
-            right: 0,
-            bottom: 0,
-            child: Icon(
-              Icons.verified_user_rounded,
-              size: 56,
-              color: Colors.white.withOpacity(0.2),
+          boxShadow: [
+            BoxShadow(
+              color: glowColor.withOpacity(0.3),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
             ),
-          ),
-        ],
+          ],
+        ),
+        padding: const EdgeInsets.all(24),
+        child: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'STATUS KEHADIRAN',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  status,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 36,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                if (showLink)
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PresensiCameraPage(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        children: [
+                          Text(
+                            linkText,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              decoration: TextDecoration.underline,
+                              decorationColor: Colors.white54,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 11,
+                            color: Colors.white.withOpacity(0.8),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                if (showLink) const SizedBox(height: 16),
+                if (!showLink) const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    pillText,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: Icon(
+                icon,
+                size: 56,
+                color: Colors.white.withOpacity(0.2),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -402,30 +473,121 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget _buildAttendanceHistory() {
-    return Row(
-      children: [
-        Expanded(
-          child: _buildAttendanceCard(
-            'CHECK-IN',
-            '08:02',
-            '24 Mei 2024',
-            'Kantor Pusat',
-            const Color(0xFF10B981),
-            isActive: true,
+    String checkInTime = '-- : --';
+    String checkInDate = 'Belum Waktunya';
+    String checkInStatus = 'N/A';
+    Color checkInColor = const Color(0xFF94A3B8);
+    bool checkInActive = false;
+
+    String checkOutTime = '-- : --';
+    String checkOutDate = 'Belum Waktunya';
+    String checkOutStatus = 'N/A';
+    Color checkOutColor = const Color(0xFF94A3B8);
+    bool checkOutActive = false;
+
+    switch (_attendanceState) {
+      case 0: // a. N/A (Default abu-abu)
+        break;
+      case 1: // b. Tepat Waktu (Hijau)
+        checkInTime = '08:02';
+        checkInDate = '10 April 2026';
+        checkInStatus = 'Tepat Waktu';
+        checkInColor = const Color(0xFF10B981);
+        checkInActive = true;
+        break;
+      case 2: // c. Terlambat (Orange)
+      case 3: // d. Terlambat (Orange)
+        checkInTime = '08:45';
+        checkInDate = '10 April 2026';
+        checkInStatus = 'Terlambat';
+        checkInColor = const Color(0xFFF59E0B);
+        checkInActive = true;
+        break;
+      case 4: // e. Selesai (Merah)
+        checkInTime = '08:02';
+        checkInDate = '10 April 2026';
+        checkInStatus = 'Tepat Waktu';
+        checkInColor = const Color(0xFF10B981);
+        checkInActive = true;
+
+        checkOutTime = '17:05';
+        checkOutDate = '10 April 2026';
+        checkOutStatus = 'Selesai';
+        checkOutColor = const Color(0xFFEF4444);
+        checkOutActive = true;
+        break;
+      case 5: // f. Belum Presensi (Merah-ish Variant)
+        checkInTime = '08:02';
+        checkInDate = '10 April 2026';
+        checkInStatus = 'Tepat Waktu';
+        checkInColor = const Color(0xFF10B981);
+        checkInActive = true;
+
+        checkOutStatus = 'Belum Keluar';
+        break;
+    }
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _attendanceState = (_attendanceState + 1) % 6;
+        });
+      },
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                if (checkInActive) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DetailPresensiPage(
+                        isSelesai: _attendanceState == 4,
+                        isTerlambat: _attendanceState == 2 || _attendanceState == 3,
+                      ),
+                    ),
+                  );
+                }
+              },
+              child: _buildAttendanceCard(
+                'MASUK',
+                checkInTime,
+                checkInDate,
+                checkInStatus,
+                checkInColor,
+                isActive: checkInActive,
+              ),
+            ),
           ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: _buildAttendanceCard(
-            'CHECK-OUT',
-            '-- : --',
-            'Belum Waktunya',
-            '17:00 WIB',
-            const Color(0xFF94A3B8),
-            isActive: false,
+          const SizedBox(width: 16),
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                if (checkOutActive || _attendanceState == 5) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DetailPresensiPage(
+                        isSelesai: _attendanceState == 4,
+                        isTerlambat: false, // Pulang normally doesn't use this flag here
+                      ),
+                    ),
+                  );
+                }
+              },
+              child: _buildAttendanceCard(
+                'PULANG',
+                checkOutTime,
+                checkOutDate,
+                checkOutStatus,
+                checkOutColor,
+                isActive: checkOutActive,
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -461,7 +623,7 @@ class _DashboardPageState extends State<DashboardPage> {
             style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.w900,
-              color: isActive ? const Color(0xFF059669) : const Color(0xFFCBD5E1),
+              color: isActive ? color : const Color(0xFFCBD5E1),
             ),
           ),
           const SizedBox(height: 4),
@@ -484,7 +646,7 @@ class _DashboardPageState extends State<DashboardPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  isActive ? Icons.location_on_rounded : Icons.access_time_filled_rounded,
+                  isActive ? Icons.access_time_filled_rounded : Icons.access_time_filled_rounded,
                   size: 14,
                   color: color,
                 ),
@@ -537,7 +699,7 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
             const SizedBox(width: 8),
             const Text(
-              'Working Hours: 08:00 - 17:00',
+              'Jam Kerja: 08:00 - 17:00',
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,

@@ -53,10 +53,10 @@ class RiwayatPresensiPage extends StatelessWidget {
                 const SizedBox(height: 16),
                 _buildAttendanceLog(
                   context,
-                  status: 'PENDING',
+                  status: 'PROSES',
                   statusColor: const Color(0xFF94A3B8),
                   day: 'Hari Ini',
-                  date: 'Senin, 24 Mei 2024',
+                  date: 'Jum\'at, 10 April 2026',
                   checkIn: '08:02',
                   checkOut: '-',
                   icon: Icons.more_horiz_rounded,
@@ -66,8 +66,8 @@ class RiwayatPresensiPage extends StatelessWidget {
                   context,
                   status: 'HADIR',
                   statusColor: const Color(0xFF10B981),
-                  day: '23 Mei 2024',
-                  date: 'Jumat',
+                  day: 'Jumat',
+                  date: '10 April 2026',
                   checkIn: '07:55',
                   checkOut: '17:05',
                   icon: Icons.check_circle_outline_rounded,
@@ -75,10 +75,10 @@ class RiwayatPresensiPage extends StatelessWidget {
                 const SizedBox(height: 16),
                 _buildAttendanceLog(
                   context,
-                  status: 'TANPA KEPULANGAN',
+                  status: 'BELUM PULANG',
                   statusColor: const Color(0xFFEF4444),
-                  day: '22 Mei 2024',
-                  date: 'Kamis',
+                  day: 'Kamis',
+                  date: '9 April 2026',
                   checkIn: '08:15',
                   checkOut: '--:--',
                   icon: Icons.warning_amber_rounded,
@@ -90,8 +90,8 @@ class RiwayatPresensiPage extends StatelessWidget {
                   context,
                   status: 'TERLAMBAT',
                   statusColor: const Color(0xFFF59E0B),
-                  day: '21 Mei 2024',
-                  date: 'Rabu',
+                  day: 'Rabu',
+                  date: '8 April 2026',
                   checkIn: '08:45',
                   checkOut: '17:30',
                   icon: Icons.access_time_rounded,
@@ -262,6 +262,7 @@ class RiwayatPresensiPage extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) => DetailPresensiPage(
                 isSelesai: status == 'HADIR' || status == 'TERLAMBAT',
+                isTerlambat: status == 'TERLAMBAT' || lateText != null,
               ),
             ),
           );
@@ -335,7 +336,7 @@ class RiwayatPresensiPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'KEDATANGAN',
+                          'MASUK',
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
@@ -379,7 +380,7 @@ class RiwayatPresensiPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'KEPULANGAN',
+                          'PULANG',
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.bold,

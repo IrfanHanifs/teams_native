@@ -20,9 +20,7 @@ class _PresensiCameraPageState extends State<PresensiCameraPage>
   bool _isCapturing = false;
   String? _errorMessage;
 
-  late AnimationController _scanLineController;
   late AnimationController _pulseController;
-  late Animation<double> _scanLineAnimation;
   late Animation<double> _pulseAnimation;
 
   @override
@@ -33,19 +31,10 @@ class _PresensiCameraPageState extends State<PresensiCameraPage>
   }
 
   void _initAnimations() {
-    _scanLineController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..repeat(reverse: true);
-
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
-
-    _scanLineAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _scanLineController, curve: Curves.easeInOut),
-    );
 
     _pulseAnimation = Tween<double>(begin: 0.9, end: 1.0).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
@@ -90,7 +79,6 @@ class _PresensiCameraPageState extends State<PresensiCameraPage>
 
   @override
   void dispose() {
-    _scanLineController.dispose();
     _pulseController.dispose();
     _cameraController?.dispose();
     super.dispose();
@@ -164,10 +152,7 @@ class _PresensiCameraPageState extends State<PresensiCameraPage>
           // Scanning frame corners
           if (_isInitialized) _buildScanningFrame(),
 
-          // Animated scan line
-          if (_isInitialized) _buildScanLine(),
-
-          // Top bar
+          // Top bar with close button
           _buildTopBar(context),
 
           // Bottom controls
@@ -188,7 +173,7 @@ class _PresensiCameraPageState extends State<PresensiCameraPage>
   Widget _buildCameraLayer() {
     if (_errorMessage != null) {
       return Container(
-        color: const Color(0xFF0D1B2A),
+        color: Colors.black,
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -227,7 +212,7 @@ class _PresensiCameraPageState extends State<PresensiCameraPage>
 
     if (!_isInitialized || _cameraController == null) {
       return Container(
-        color: const Color(0xFF0D1B2A),
+        color: Colors.black,
         child: const Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -307,7 +292,7 @@ class _PresensiCameraPageState extends State<PresensiCameraPage>
     return CustomPaint(
       size: const Size(36, 36),
       painter: _CornerPainter(
-        color: const Color(0xFF4A9EFF),
+        color: Colors.white.withOpacity(0.8),
         strokeWidth: 3.5,
         isTopLeft: isTopLeft,
         isTopRight: isTopRight,
@@ -317,84 +302,45 @@ class _PresensiCameraPageState extends State<PresensiCameraPage>
     );
   }
 
-  Widget _buildScanLine() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final w = constraints.maxWidth;
-        final h = constraints.maxHeight;
-        final frameW = w * 0.72;
-        final frameH = frameW * 1.25;
-        final frameL = (w - frameW) / 2;
-        final frameT = h * 0.22;
 
-        return AnimatedBuilder(
-          animation: _scanLineAnimation,
-          builder: (context, _) {
-            final lineY = frameT + (_scanLineAnimation.value * frameH);
-            return Positioned(
-              left: frameL + 4,
-              top: lineY,
-              child: Container(
-                width: frameW - 8,
-                height: 2.5,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.transparent,
-                      const Color(0xFF4A9EFF).withOpacity(0.8),
-                      const Color(0xFF00D4FF),
-                      const Color(0xFF4A9EFF).withOpacity(0.8),
-                      Colors.transparent,
-                    ],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF4A9EFF).withOpacity(0.6),
-                      blurRadius: 8,
-                      spreadRadius: 2,
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
 
   Widget _buildTopBar(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Row(
-          children: [
-            const Spacer(),
-            const Text(
-              'Presensi',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
-                shadows: [Shadow(color: Colors.black45, blurRadius: 4)],
-              ),
-            ),
-            const Spacer(),
-            GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.white.withOpacity(0.3)),
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.white.withOpacity(0.2)),
+                  ),
+                  child: const Icon(Icons.close, color: Colors.white, size: 24),
                 ),
-                child: const Icon(Icons.close, color: Colors.white, size: 20),
               ),
-            ),
-          ],
+              const Text(
+                'Presensi',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.5,
+                  shadows: [Shadow(color: Colors.black45, blurRadius: 4)],
+                ),
+              ),
+              const SizedBox(width: 40), // Balanced spacing
+            ],
+          ),
         ),
       ),
     );

@@ -9,7 +9,6 @@ class ProfilPage extends StatefulWidget {
 }
 
 class _ProfilPageState extends State<ProfilPage> {
-  bool _isDarkMode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +62,7 @@ class _ProfilPageState extends State<ProfilPage> {
                       ),
                       child: const CircleAvatar(
                         radius: 60,
-                        backgroundImage: NetworkImage('https://github.com/identicons/andikarizky.png'), // Placeholder
+                        backgroundImage: NetworkImage('https://randomuser.me/api/portraits/men/32.jpg'),
                       ),
                     ),
                     Container(
@@ -72,17 +71,24 @@ class _ProfilPageState extends State<ProfilPage> {
                         color: Colors.white,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
-                        Icons.verified_rounded,
-                        color: Color(0xFF2563EB),
-                        size: 28,
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF2563EB),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.edit_rounded,
+                          color: Colors.white,
+                          size: 16,
+                        ),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 24),
                 const Text(
-                  'Andika Rizky Septiawan',
+                  'Andika Risky Septiawan',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -91,7 +97,7 @@ class _ProfilPageState extends State<ProfilPage> {
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  '@andikarizky',
+                  '@_andika.risky',
                   style: TextStyle(
                     fontSize: 14,
                     color: Color(0xFF64748B),
@@ -129,7 +135,7 @@ class _ProfilPageState extends State<ProfilPage> {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        'Senior UX Designer',
+                        'Fullstack Developer',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -157,6 +163,7 @@ class _ProfilPageState extends State<ProfilPage> {
                   ),
                   child: Column(
                     children: [
+                      /*
                       _buildSettingsItem(
                         icon: Icons.nightlight_round,
                         title: 'Ganti Tema',
@@ -174,6 +181,7 @@ class _ProfilPageState extends State<ProfilPage> {
                         padding: EdgeInsets.symmetric(horizontal: 16),
                         child: Divider(height: 1),
                       ),
+                      */
                       _buildSettingsItem(
                         icon: Icons.lock_reset_rounded,
                         title: 'Ubah Kata Sandi',
@@ -225,28 +233,34 @@ class _ProfilPageState extends State<ProfilPage> {
                 ),
                 
                 const SizedBox(height: 48),
-                
-                // Footer
-                const Text(
-                  'Versi Aplikasi 2.4.0 (Stable)',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF94A3B8),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                const Text(
-                  'Teams by Cipta Solutindo • 2026',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF94A3B8),
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                const SizedBox(height: 40),
               ],
             ),
+          ),
+        ),
+        
+        // Footer (Moved outside SingleChildScrollView to stay at bottom)
+        Padding(
+          padding: const EdgeInsets.only(bottom: 24.0),
+          child: Column(
+            children: [
+              const Text(
+                'Versi Aplikasi 2.4.0 (Stable)',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF94A3B8),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                'Teams by Cipta Solutindo • 2026',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF94A3B8),
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
           ),
         ),
       ],
