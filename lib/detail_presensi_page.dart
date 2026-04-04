@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class DetailPresensiPage extends StatelessWidget {
-  const DetailPresensiPage({super.key});
+  final bool isSelesai;
+  const DetailPresensiPage({super.key, this.isSelesai = true});
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +23,6 @@ class DetailPresensiPage extends StatelessWidget {
             fontSize: 18,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert, color: Color(0xFF64748B)),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -52,10 +47,10 @@ class DetailPresensiPage extends StatelessWidget {
             const SizedBox(height: 16),
             _buildDetailInfoCard(
               label: 'CLOCK OUT',
-              value: '17:45',
-              suffix: 'PM',
-              badgeText: 'COMPLETED',
-              badgeColor: const Color(0xFF94A3B8),
+              value: isSelesai ? '17:45' : '--:--',
+              suffix: isSelesai ? 'PM' : '',
+              badgeText: isSelesai ? 'COMPLETED' : 'IN PROGRESS',
+              badgeColor: isSelesai ? const Color(0xFF94A3B8) : const Color(0xFF2563EB),
               icon: Icons.logout_rounded,
               iconBgColor: const Color(0xFFFFF7ED),
               iconColor: const Color(0xFFF97316),
@@ -71,7 +66,7 @@ class DetailPresensiPage extends StatelessWidget {
             const SizedBox(height: 16),
             _buildDetailInfoCard(
               label: 'ATTENDANCE STATUS',
-              value: 'Tepat Waktu',
+              value: isSelesai ? 'Tepat Waktu' : 'Belum Keluar',
               icon: Icons.check_circle_rounded,
               iconBgColor: const Color(0xFFDCFCE7),
               iconColor: const Color(0xFF10B981),

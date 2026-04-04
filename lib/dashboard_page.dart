@@ -8,6 +8,7 @@ import 'package:teams_native/sakit_surat_page.dart';
 import 'package:teams_native/riwayat_presensi_page.dart';
 import 'package:teams_native/profil_page.dart';
 import 'package:teams_native/presensi_camera_page.dart';
+import 'package:teams_native/detail_perjalanan_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -270,7 +271,12 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
           ),
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const DetailPerjalananPage()),
+              );
+            },
             child: const Text(
               'Lihat Detail',
               style: TextStyle(

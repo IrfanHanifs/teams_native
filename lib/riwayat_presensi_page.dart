@@ -16,12 +16,7 @@ class RiwayatPresensiPage extends StatelessWidget {
             bottom: false,
             child: Row(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Color(0xFF2563EB)),
-                  onPressed: () {
-                    // Logic to go back to home tab might be needed if integrated as tab
-                  },
-                ),
+                const SizedBox(width: 16), // Padding for centering
                 const Expanded(
                   child: Center(
                     child: Text(
@@ -264,7 +259,11 @@ class RiwayatPresensiPage extends StatelessWidget {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const DetailPresensiPage()),
+            MaterialPageRoute(
+              builder: (context) => DetailPresensiPage(
+                isSelesai: status == 'HADIR' || status == 'TERLAMBAT',
+              ),
+            ),
           );
         },
         borderRadius: BorderRadius.circular(20),
