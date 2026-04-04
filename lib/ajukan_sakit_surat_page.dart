@@ -8,25 +8,46 @@ class AjukanSakitSuratPage extends StatefulWidget {
 }
 
 class _AjukanSakitSuratPageState extends State<AjukanSakitSuratPage> {
-  final TextEditingController _startDateController = TextEditingController();
-  final TextEditingController _endDateController = TextEditingController();
+  DateTime? _startDate;
+  DateTime? _endDate;
 
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
+      firstDate: DateTime(2020),
       lastDate: DateTime(2101),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFF2563EB),
+              onPrimary: Colors.white,
+              onSurface: Color(0xFF0F172A),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) {
       setState(() {
         if (isStartDate) {
-          _startDateController.text = "${picked.month}/${picked.day}/${picked.year}";
+          _startDate = picked;
         } else {
-          _endDateController.text = "${picked.month}/${picked.day}/${picked.year}";
+          _endDate = picked;
         }
       });
     }
+  }
+
+  String _formatDate(DateTime? date) {
+    if (date == null) return 'Pilih Tanggal';
+    final months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+      'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
+    ];
+    return "${date.day} ${months[date.month - 1]} ${date.year}";
   }
   @override
   Widget build(BuildContext context) {
@@ -95,30 +116,26 @@ class _AjukanSakitSuratPageState extends State<AjukanSakitSuratPage> {
                   // Start Date
                   _buildFormLabel('Tanggal Mulai Izin'),
                   const SizedBox(height: 10),
-                  InkWell(
+                  _buildDatePickerField(
+                    _formatDate(_startDate),
+                    isPlaceholder: _startDate == null,
                     onTap: () => _selectDate(context, true),
-                    child: IgnorePointer(
-                      child: _buildDatePickerField(
-                        controller: _startDateController,
-                        hint: 'mm/dd/yyyy',
-                      ),
-                    ),
                   ),
+                  const SizedBox(height: 6),
+                  _buildHelpText('Pilih tanggal awal sakit Anda'),
                   
                   const SizedBox(height: 24),
                   
                   // End Date
                   _buildFormLabel('Tanggal Selesai Izin'),
                   const SizedBox(height: 10),
-                  InkWell(
+                  _buildDatePickerField(
+                    _formatDate(_endDate),
+                    isPlaceholder: _endDate == null,
                     onTap: () => _selectDate(context, false),
-                    child: IgnorePointer(
-                      child: _buildDatePickerField(
-                        controller: _endDateController,
-                        hint: 'mm/dd/yyyy',
-                      ),
-                    ),
                   ),
+                  const SizedBox(height: 6),
+                  _buildHelpText('Pilih estimasi tanggal sembuh'),
                   
                   const SizedBox(height: 24),
                   
@@ -126,13 +143,20 @@ class _AjukanSakitSuratPageState extends State<AjukanSakitSuratPage> {
                   _buildFormLabel('Dokumen Pendukung'),
                   const SizedBox(height: 10),
                   _buildUploadField(),
+                  const SizedBox(height: 6),
+                  _buildHelpText('Unggah foto/file surat keterangan dokter'),
                   
                   const SizedBox(height: 24),
                   
                   // Description
                   _buildFormLabel('Alasan / Deskripsi'),
                   const SizedBox(height: 10),
-                  _buildTextAreaField(),
+                  _buildTextAreaField(
+                    hint: 'Berikan deskripsi singkat kondisi Anda...',
+                    icon: Icons.notes_rounded,
+                  ),
+                  const SizedBox(height: 6),
+                  _buildHelpText('Contoh: Gejala flu dan demam tinggi'),
                 ],
               ),
             ),
@@ -165,31 +189,83 @@ class _AjukanSakitSuratPageState extends State<AjukanSakitSuratPage> {
     );
   }
 
-  Widget _buildDatePickerField({TextEditingController? controller, required String hint}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1F5F9),
-        borderRadius: BorderRadius.circular(12),
+  Widget _buildHelpText(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 2),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 11,
+          color: Color(0xFF64748B),
+          height: 1.4,
+        ),
       ),
-      child: Row(
-        children: [
-          const Icon(Icons.calendar_today_rounded, color: Color(0xFF2563EB), size: 18),
-          const SizedBox(width: 12),
-          Expanded(
-            child: TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                hintText: hint,
-                isDense: true,
-                border: InputBorder.none,
-                hintStyle: const TextStyle(
+    );
+  }
+
+  Widget _buildDatePickerField(String value, {bool isPlaceholder = false, VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF1F5F9),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.black.withOpacity(0.05)),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                value,
+                style: TextStyle(
                   fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF94A3B8),
+                  fontWeight: isPlaceholder ? FontWeight.w500 : FontWeight.bold,
+                  color: isPlaceholder ? const Color(0xFF94A3B8) : const Color(0xFF1E293B),
                 ),
               ),
             ),
+            Icon(
+              Icons.calendar_today_rounded,
+              color: isPlaceholder ? const Color(0xFF94A3B8) : const Color(0xFF2563EB),
+              size: 18,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextAreaField({required String hint, required IconData icon}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      height: 120,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F5F9),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.black.withOpacity(0.05)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: TextField(
+              maxLines: null,
+              decoration: InputDecoration(
+                hintText: hint,
+                hintStyle: const TextStyle(
+                  color: Color(0xFF94A3B8),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.zero,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Icon(icon, color: const Color(0xFF94A3B8), size: 18),
           ),
         ],
       ),
@@ -205,7 +281,6 @@ class _AjukanSakitSuratPageState extends State<AjukanSakitSuratPage> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: const Color(0xFFCBD5E1),
-          // style: BorderStyle.solid,
         ),
       ),
       child: const Column(
@@ -229,31 +304,6 @@ class _AjukanSakitSuratPageState extends State<AjukanSakitSuratPage> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildTextAreaField() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      height: 120,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1F5F9),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: const TextField(
-        maxLines: null,
-        decoration: InputDecoration(
-          hintText: 'Berikan deskripsi singkat kondisi Anda...',
-          hintStyle: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFF94A3B8),
-            height: 1.4,
-          ),
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.zero,
-        ),
       ),
     );
   }

@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 
 class DetailPresensiPage extends StatelessWidget {
   final bool isSelesai;
-  const DetailPresensiPage({super.key, this.isSelesai = true});
+  final bool isTerlambat;
+  const DetailPresensiPage({
+    super.key, 
+    this.isSelesai = true, 
+    this.isTerlambat = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,21 +40,21 @@ class DetailPresensiPage extends StatelessWidget {
             
             // Detail Info Cards
             _buildDetailInfoCard(
-              label: 'CLOCK IN',
+              label: 'MASUK',
               value: '08:24',
               suffix: 'AM',
-              badgeText: 'ON TIME',
-              badgeColor: const Color(0xFF10B981),
+              badgeText: isTerlambat ? 'TERLAMBAT' : 'TEPAT WAKTU',
+              badgeColor: isTerlambat ? const Color(0xFFF97316) : const Color(0xFF10B981),
               icon: Icons.access_time_filled_rounded,
               iconBgColor: const Color(0xFFEFF6FF),
               iconColor: const Color(0xFF2563EB),
             ),
             const SizedBox(height: 16),
             _buildDetailInfoCard(
-              label: 'CLOCK OUT',
+              label: 'PULANG',
               value: isSelesai ? '17:45' : '--:--',
               suffix: isSelesai ? 'PM' : '',
-              badgeText: isSelesai ? 'COMPLETED' : 'IN PROGRESS',
+              badgeText: isSelesai ? 'SELESAI' : 'PROSES',
               badgeColor: isSelesai ? const Color(0xFF94A3B8) : const Color(0xFF2563EB),
               icon: Icons.logout_rounded,
               iconBgColor: const Color(0xFFFFF7ED),
@@ -57,16 +62,16 @@ class DetailPresensiPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             _buildDetailInfoCard(
-              label: 'WORK LOCATION',
-              value: 'Office Jakarta Selatan',
+              label: 'LOKASI KERJA',
+              value: 'Jl. Raya Solo - Tawangmangu, Tegal, Triyagan, Kec. Mojolaban, Kab. Sukoharjo',
               icon: Icons.location_on_rounded,
               iconBgColor: const Color(0xFFE0F7FA),
               iconColor: const Color(0xFF00ACC1),
             ),
             const SizedBox(height: 16),
             _buildDetailInfoCard(
-              label: 'ATTENDANCE STATUS',
-              value: isSelesai ? 'Tepat Waktu' : 'Belum Keluar',
+              label: 'STATUS KEHADIRAN',
+              value: isSelesai ? 'Selesai' : 'Belum Pulang',
               icon: Icons.check_circle_rounded,
               iconBgColor: const Color(0xFFDCFCE7),
               iconColor: const Color(0xFF10B981),
@@ -77,7 +82,7 @@ class DetailPresensiPage extends StatelessWidget {
             
             // Duration Section
             const Text(
-              'DURATION',
+              'DURASI',
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w800,
@@ -100,7 +105,7 @@ class DetailPresensiPage extends StatelessWidget {
                 ),
                 SizedBox(width: 8),
                 Text(
-                  'Hours',
+                  'Jam',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -118,7 +123,7 @@ class DetailPresensiPage extends StatelessWidget {
                 ),
                 SizedBox(width: 8),
                 Text(
-                  'Mins',
+                  'Menit',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -152,7 +157,7 @@ class DetailPresensiPage extends StatelessWidget {
       child: const Column(
         children: [
           Text(
-            'SELECTED DATE',
+            'TANGGAL TERPILIH',
             style: TextStyle(
               color: Colors.white70,
               fontSize: 11,
@@ -232,15 +237,18 @@ class DetailPresensiPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.end,
                   children: [
                     Text(
                       value,
-                      style: const TextStyle(
-                        fontSize: 22,
+                      style: TextStyle(
+                        fontSize: value.length > 25 ? 14 : 22,
                         fontWeight: FontWeight.w900,
-                        color: Color(0xFF1E293B),
+                        color: (label == 'MASUK' && isTerlambat) 
+                            ? const Color(0xFFF97316) 
+                            : const Color(0xFF1E293B),
+                        height: 1.4,
                       ),
                     ),
                     if (suffix != null) ...[

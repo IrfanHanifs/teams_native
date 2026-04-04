@@ -9,25 +9,46 @@ class AjukanIzinPage extends StatefulWidget {
 }
 
 class _AjukanIzinPageState extends State<AjukanIzinPage> {
-  final TextEditingController _startDateController = TextEditingController();
-  final TextEditingController _endDateController = TextEditingController();
+  DateTime? _startDate;
+  DateTime? _endDate;
 
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
+      firstDate: DateTime(2020),
       lastDate: DateTime(2101),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFF2563EB),
+              onPrimary: Colors.white,
+              onSurface: Color(0xFF0F172A),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) {
       setState(() {
         if (isStartDate) {
-          _startDateController.text = "${picked.month}/${picked.day}/${picked.year}";
+          _startDate = picked;
         } else {
-          _endDateController.text = "${picked.month}/${picked.day}/${picked.year}";
+          _endDate = picked;
         }
       });
     }
+  }
+
+  String _formatDate(DateTime? date) {
+    if (date == null) return 'Pilih Tanggal';
+    final months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+      'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
+    ];
+    return "${date.day} ${months[date.month - 1]} ${date.year}";
   }
   @override
   Widget build(BuildContext context) {
@@ -92,42 +113,36 @@ class _AjukanIzinPageState extends State<AjukanIzinPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Start Date
-                  _buildLabel('Tanggal Mulai'),
-                  const SizedBox(height: 8),
-                  InkWell(
+                  _buildFormLabel('Tanggal Mulai'),
+                  const SizedBox(height: 10),
+                  _buildDatePickerField(
+                    _formatDate(_startDate),
+                    isPlaceholder: _startDate == null,
                     onTap: () => _selectDate(context, true),
-                    child: IgnorePointer(
-                      child: _buildField(
-                        controller: _startDateController,
-                        hint: 'mm/dd/yyyy',
-                        icon: Icons.calendar_today_outlined,
-                        suffixIcon: Icons.calendar_today,
-                      ),
-                    ),
                   ),
+                  const SizedBox(height: 6),
+                  _buildHelpText('Pilih tanggal awal izin Anda'),
+                  
                   const SizedBox(height: 24),
-
+                  
                   // End Date
-                  _buildLabel('Tanggal Selesai'),
-                  const SizedBox(height: 8),
-                  InkWell(
+                  _buildFormLabel('Tanggal Selesai'),
+                  const SizedBox(height: 10),
+                  _buildDatePickerField(
+                    _formatDate(_endDate),
+                    isPlaceholder: _endDate == null,
                     onTap: () => _selectDate(context, false),
-                    child: IgnorePointer(
-                      child: _buildField(
-                        controller: _endDateController,
-                        hint: 'mm/dd/yyyy',
-                        icon: Icons.calendar_month_outlined,
-                        suffixIcon: Icons.calendar_today,
-                      ),
-                    ),
                   ),
+                  const SizedBox(height: 6),
+                  _buildHelpText('Pilih tanggal terakhir izin Anda'),
+                  
                   const SizedBox(height: 24),
-
+                  
                   // Subject
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildLabel('Subjek'),
+                      _buildFormLabel('Subjek'),
                       const Text(
                         'Maksimal 50 karakter',
                         style: TextStyle(
@@ -137,28 +152,35 @@ class _AjukanIzinPageState extends State<AjukanIzinPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  _buildField(
+                  const SizedBox(height: 10),
+                  _buildTextField(
                     hint: 'Contoh: Izin Kedukaan',
                     icon: Icons.label_important_rounded,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 24),
 
                   // Info Banner
                   _buildInfoBanner(),
                   const SizedBox(height: 24),
 
                   // Description
-                  _buildLabel('Keterangan'),
-                  const SizedBox(height: 8),
-                  _buildTextArea(
+                  _buildFormLabel('Keterangan'),
+                  const SizedBox(height: 10),
+                  _buildTextAreaField(
                     hint: 'Alasan pengajuan izin...',
                     icon: Icons.notes_rounded,
                   ),
+                  const SizedBox(height: 6),
+                  _buildHelpText('Berikan penjelasan singkat mengenai permohonan Anda'),
+
                   const SizedBox(height: 24),
 
                   // Attachment
+                  _buildFormLabel('Lampiran File Pendukung'),
+                  const SizedBox(height: 10),
                   _buildDashedAttachment(),
+                  const SizedBox(height: 6),
+                  _buildHelpText('Unggah dokumen pendukung jika diperlukan'),
                 ],
               ),
             ),
@@ -183,7 +205,7 @@ class _AjukanIzinPageState extends State<AjukanIzinPage> {
     );
   }
 
-  Widget _buildLabel(String label) {
+  Widget _buildFormLabel(String label) {
     return Text(
       label,
       style: const TextStyle(
@@ -194,20 +216,65 @@ class _AjukanIzinPageState extends State<AjukanIzinPage> {
     );
   }
 
-  Widget _buildField({TextEditingController? controller, required String hint, required IconData icon, IconData? suffixIcon}) {
+  Widget _buildHelpText(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 2),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 11,
+          color: Color(0xFF64748B),
+          height: 1.4,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDatePickerField(String value, {bool isPlaceholder = false, VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF1F5F9),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.black.withOpacity(0.05)),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: isPlaceholder ? FontWeight.w500 : FontWeight.bold,
+                  color: isPlaceholder ? const Color(0xFF94A3B8) : const Color(0xFF1E293B),
+                ),
+              ),
+            ),
+            Icon(
+              Icons.calendar_today_rounded,
+              color: isPlaceholder ? const Color(0xFF94A3B8) : const Color(0xFF2563EB),
+              size: 18,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({required String hint, required IconData icon}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: const Color(0xFFF1F5F9),
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.black.withOpacity(0.05)),
       ),
       child: Row(
         children: [
-          Icon(icon, color: const Color(0xFF64748B), size: 20),
-          const SizedBox(width: 12),
           Expanded(
             child: TextField(
-              controller: controller,
               decoration: InputDecoration(
                 hintText: hint,
                 hintStyle: const TextStyle(
@@ -220,29 +287,28 @@ class _AjukanIzinPageState extends State<AjukanIzinPage> {
               ),
             ),
           ),
-          if (suffixIcon != null)
-            Icon(suffixIcon, color: Colors.black, size: 20),
+          Icon(
+            icon,
+            color: const Color(0xFF94A3B8),
+            size: 18,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildTextArea({required String hint, required IconData icon}) {
+  Widget _buildTextAreaField({required String hint, required IconData icon}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       height: 120,
       decoration: BoxDecoration(
         color: const Color(0xFFF1F5F9),
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.black.withOpacity(0.05)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 2),
-            child: Icon(icon, color: const Color(0xFF64748B), size: 20),
-          ),
-          const SizedBox(width: 12),
           Expanded(
             child: TextField(
               maxLines: null,
@@ -257,6 +323,10 @@ class _AjukanIzinPageState extends State<AjukanIzinPage> {
                 contentPadding: EdgeInsets.zero,
               ),
             ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Icon(icon, color: const Color(0xFF94A3B8), size: 18),
           ),
         ],
       ),
