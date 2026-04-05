@@ -1,4 +1,6 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AjukanCutiPage extends StatefulWidget {
   const AjukanCutiPage({super.key});
@@ -11,6 +13,17 @@ class _AjukanCutiPageState extends State<AjukanCutiPage> {
   String? _selectedLeaveType;
   DateTime? _startDate;
   DateTime? _endDate;
+  String? _fileName;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickFile() async {
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _fileName = pickedFile.name;
+      });
+    }
+  }
 
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
     final DateTime? picked = await showDatePicker(
@@ -172,7 +185,6 @@ class _AjukanCutiPageState extends State<AjukanCutiPage> {
                   
                   const SizedBox(height: 24),
                   
-                  // Attachment
                   _buildFormLabel('Lampiran File Pendukung'),
                   const SizedBox(height: 10),
                   _buildUploadField(),
@@ -369,38 +381,62 @@ class _AjukanCutiPageState extends State<AjukanCutiPage> {
   }
 
   Widget _buildUploadField() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 24),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1F5F9),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: const Color(0xFFCBD5E1),
-          style: BorderStyle.solid, // Should be dashed, but Flutter requires custom painter for dashed
+    return InkWell(
+      onTap: _pickFile,
+      child: CustomPaint(
+        painter: DashRectPainter(color: const Color(0xFFCBD5E1)),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            children: [
+              Icon(
+                _fileName != null ? Icons.insert_drive_file_rounded : Icons.cloud_upload_outlined,
+                color: const Color(0xFF2563EB),
+                size: 32,
+              ),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  _fileName ?? 'Pilih File Lampiran',
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: _fileName != null ? const Color(0xFF1E293B) : const Color(0xFF64748B),
+                  ),
+                ),
+              ),
+              if (_fileName == null) ...[
+                const SizedBox(height: 4),
+                const Text(
+                  'Format: JPG atau PNG (Maks. 5MB)',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Color(0xFF94A3B8),
+                  ),
+                ),
+              ] else ...[
+                const SizedBox(height: 4),
+                const Text(
+                  'Klik untuk mengganti file',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Color(0xFF2563EB),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
-      ),
-      child: const Column(
-        children: [
-          Icon(Icons.cloud_upload_outlined, color: Color(0xFF64748B), size: 36),
-          SizedBox(height: 12),
-          Text(
-            'Unggah File',
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1E293B),
-            ),
-          ),
-          SizedBox(height: 4),
-          Text(
-            'PDF, JPG, atau PNG (Maks. 5MB)',
-            style: TextStyle(
-              fontSize: 12,
-              color: Color(0xFF64748B),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -488,4 +524,46 @@ class _AjukanCutiPageState extends State<AjukanCutiPage> {
       ),
     );
   }
+}
+
+class DashRectPainter extends CustomPainter {
+  final Color color;
+  final double strokeWidth;
+  final double gap;
+
+  DashRectPainter({this.color = Colors.black, this.strokeWidth = 1.0, this.gap = 5.0});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+
+    Path path = Path();
+    path.addRRect(RRect.fromRectAndRadius(
+      Rect.fromLTWH(0, 0, size.width, size.height),
+      const Radius.circular(12),
+    ));
+
+    Path dashPath = Path();
+    double dashWidth = 10.0;
+    double dashGap = 5.0;
+
+    for (PathMetric pathMetric in path.computeMetrics()) {
+      double distance = 0.0;
+      while (distance < pathMetric.length) {
+        dashPath.addPath(
+          pathMetric.extractPath(distance, distance + dashWidth),
+          Offset.zero,
+        );
+        distance += dashWidth + dashGap;
+      }
+    }
+
+    canvas.drawPath(dashPath, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

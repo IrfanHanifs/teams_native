@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AjukanIzinPage extends StatefulWidget {
   const AjukanIzinPage({super.key});
@@ -11,6 +12,17 @@ class AjukanIzinPage extends StatefulWidget {
 class _AjukanIzinPageState extends State<AjukanIzinPage> {
   DateTime? _startDate;
   DateTime? _endDate;
+  String? _fileName;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickFile() async {
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _fileName = pickedFile.name;
+      });
+    }
+  }
 
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
     final DateTime? picked = await showDatePicker(
@@ -175,10 +187,9 @@ class _AjukanIzinPageState extends State<AjukanIzinPage> {
 
                   const SizedBox(height: 24),
 
-                  // Attachment
                   _buildFormLabel('Lampiran File Pendukung'),
                   const SizedBox(height: 10),
-                  _buildDashedAttachment(),
+                  _buildUploadField(),
                   const SizedBox(height: 6),
                   _buildHelpText('Unggah dokumen pendukung jika diperlukan'),
                 ],
@@ -361,26 +372,62 @@ class _AjukanIzinPageState extends State<AjukanIzinPage> {
     );
   }
 
-  Widget _buildDashedAttachment() {
-    return CustomPaint(
-      painter: DashRectPainter(color: const Color(0xFFCBD5E1)),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.attachment_rounded, color: Color(0xFF334155)),
-            SizedBox(width: 12),
-            Text(
-              'Lampiran (Opsional)',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF334155),
+  Widget _buildUploadField() {
+    return InkWell(
+      onTap: _pickFile,
+      child: CustomPaint(
+        painter: DashRectPainter(color: const Color(0xFFCBD5E1)),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF1F5F9),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            children: [
+              Icon(
+                _fileName != null ? Icons.insert_drive_file_rounded : Icons.cloud_upload_outlined,
+                color: const Color(0xFF2563EB),
+                size: 32,
               ),
-            ),
-          ],
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  _fileName ?? 'Pilih File Lampiran',
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: _fileName != null ? const Color(0xFF1E293B) : const Color(0xFF64748B),
+                  ),
+                ),
+              ),
+              if (_fileName == null) ...[
+                const SizedBox(height: 4),
+                const Text(
+                  'Format: JPG atau PNG (Maks. 5MB)',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Color(0xFF94A3B8),
+                  ),
+                ),
+              ] else ...[
+                const SizedBox(height: 4),
+                const Text(
+                  'Klik untuk mengganti file',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Color(0xFF2563EB),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );

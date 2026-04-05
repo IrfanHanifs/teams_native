@@ -42,7 +42,6 @@ class DetailPresensiPage extends StatelessWidget {
             _buildDetailInfoCard(
               label: 'MASUK',
               value: '08:24',
-              suffix: 'AM',
               badgeText: isTerlambat ? 'TERLAMBAT' : 'TEPAT WAKTU',
               badgeColor: isTerlambat ? const Color(0xFFF97316) : const Color(0xFF10B981),
               icon: Icons.access_time_filled_rounded,
@@ -53,7 +52,6 @@ class DetailPresensiPage extends StatelessWidget {
             _buildDetailInfoCard(
               label: 'PULANG',
               value: isSelesai ? '17:45' : '--:--',
-              suffix: isSelesai ? 'PM' : '',
               badgeText: isSelesai ? 'SELESAI' : 'PROSES',
               badgeColor: isSelesai ? const Color(0xFF94A3B8) : const Color(0xFF2563EB),
               icon: Icons.logout_rounded,
@@ -191,7 +189,6 @@ class DetailPresensiPage extends StatelessWidget {
   Widget _buildDetailInfoCard({
     required String label,
     required String value,
-    String? suffix,
     String? badgeText,
     Color? badgeColor,
     required IconData icon,
@@ -251,20 +248,6 @@ class DetailPresensiPage extends StatelessWidget {
                         height: 1.4,
                       ),
                     ),
-                    if (suffix != null) ...[
-                      const SizedBox(width: 4),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 2.0),
-                        child: Text(
-                          suffix,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF64748B),
-                          ),
-                        ),
-                      ),
-                    ],
                   ],
                 ),
               ],
