@@ -186,11 +186,8 @@ class CutiPage extends StatelessWidget {
           }
         },
         borderRadius: BorderRadius.circular(20),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.black.withOpacity(0.05)),
-          ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
           child: IntrinsicHeight(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -198,13 +195,7 @@ class CutiPage extends StatelessWidget {
                 // Left color indicator
                 Container(
                   width: 6,
-                  decoration: BoxDecoration(
-                    color: statusColor,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      bottomLeft: Radius.circular(20),
-                    ),
-                  ),
+                  color: statusColor,
                 ),
                 Expanded(
                   child: Padding(

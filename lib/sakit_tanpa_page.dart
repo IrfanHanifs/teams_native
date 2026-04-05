@@ -147,21 +147,17 @@ class SakitTanpaPage extends StatelessWidget {
           ),
         ],
       ),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Left color indicator
-            Container(
-              width: 5,
-              decoration: BoxDecoration(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Left color indicator
+              Container(
+                width: 5,
                 color: statusColor,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  bottomLeft: Radius.circular(20),
-                ),
               ),
-            ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -269,7 +265,7 @@ class SakitTanpaPage extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ),);
   }
 
   Widget _buildStatusBadge(String text, Color color) {

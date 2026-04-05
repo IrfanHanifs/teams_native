@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:teams_native/ubah_kata_sandi_page.dart';
+import 'package:teams_native/crop_page.dart';
 
 class ProfilPage extends StatefulWidget {
   const ProfilPage({super.key});
@@ -9,6 +12,35 @@ class ProfilPage extends StatefulWidget {
 }
 
 class _ProfilPageState extends State<ProfilPage> {
+  File? _image;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024,
+        maxHeight: 1024,
+      );
+
+      if (pickedFile != null && mounted) {
+        final File? croppedFile = await Navigator.push<File>(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CropPage(image: File(pickedFile.path)),
+          ),
+        );
+
+        if (croppedFile != null) {
+          setState(() {
+            _image = croppedFile;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Error picking image: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,47 +76,54 @@ class _ProfilPageState extends State<ProfilPage> {
             child: Column(
               children: [
                 // Avatar with Verified Badge
-                Stack(
-                  alignment: Alignment.bottomRight,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 20,
-                            offset: Offset(0, 10),
-                          ),
-                        ],
-                      ),
-                      child: const CircleAvatar(
-                        radius: 60,
-                        backgroundImage: NetworkImage('https://randomuser.me/api/portraits/men/32.jpg'),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
+                InkWell(
+                  onTap: _pickImage,
+                  borderRadius: BorderRadius.circular(60),
+                  child: Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(4),
                         decoration: const BoxDecoration(
-                          color: Color(0xFF2563EB),
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 20,
+                              offset: Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: CircleAvatar(
+                          radius: 60,
+                          backgroundColor: const Color(0xFFF1F5F9),
+                          backgroundImage: _image != null
+                              ? FileImage(_image!)
+                              : const NetworkImage('https://randomuser.me/api/portraits/men/32.jpg') as ImageProvider,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
-                          Icons.edit_rounded,
-                          color: Colors.white,
-                          size: 16,
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF2563EB),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.edit_rounded,
+                            color: Colors.white,
+                            size: 16,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 24),
                 const Text(

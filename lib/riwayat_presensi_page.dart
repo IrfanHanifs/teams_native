@@ -83,7 +83,8 @@ class RiwayatPresensiPage extends StatelessWidget {
                   checkOut: '--:--',
                   icon: Icons.warning_amber_rounded,
                   isWarning: true,
-                  warningMsg: 'Anda belum melakukan absen pulang pada hari ini.',
+                  warningMsg:
+                      'Anda belum melakukan absen pulang pada hari ini.',
                 ),
                 const SizedBox(height: 16),
                 _buildAttendanceLog(
@@ -140,7 +141,11 @@ class RiwayatPresensiPage extends StatelessWidget {
                   letterSpacing: 1.0,
                 ),
               ),
-              Icon(Icons.calendar_month_rounded, color: Colors.white.withOpacity(0.5), size: 24),
+              Icon(
+                Icons.calendar_month_rounded,
+                color: Colors.white.withOpacity(0.5),
+                size: 24,
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -274,7 +279,7 @@ class RiwayatPresensiPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             border: isWarning
                 ? Border.all(color: const Color(0xFFFECDD3))
-                : Border.all(color: Colors.black.withOpacity(0.02)),
+                : Border.all(color: Colors.black.withOpacity(0.1)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -305,7 +310,10 @@ class RiwayatPresensiPage extends StatelessWidget {
                     ],
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: statusColor.withOpacity(0.12),
                       borderRadius: BorderRadius.circular(20),
@@ -353,7 +361,9 @@ class RiwayatPresensiPage extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w900,
-                                color: lateText != null ? const Color(0xFFF59E0B) : const Color(0xFF2563EB),
+                                color: lateText != null
+                                    ? const Color(0xFFF59E0B)
+                                    : const Color(0xFF2563EB),
                               ),
                             ),
                             if (lateText != null) ...[
